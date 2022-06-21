@@ -1,0 +1,34 @@
+{
+  "name": "attribute-oracle",
+  "version": "1.0.0",
+  "description": "Attribute Oracle using bigchaindb",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js",
+    "manza": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zaimanza/attribute-oracle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zaimanza/attribute-oracle/issues"
+  },
+  "homepage": "https://github.com/zaimanza/attribute-oracle#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bigchaindb-driver": "^4.3.0",
+    "bip39": "^3.0.4",
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "mongodb": "^4.7.0",
+    "node-localstorage": "^2.2.1"
+  }
+}

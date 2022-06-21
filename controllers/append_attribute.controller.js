@@ -86,7 +86,7 @@ router.post('/append_attribute', async (req, res) => {
             for (const attribute of props?.attributes) {
                 fetchedAttributeLatestTransaction.metadata.attributes.push(attribute)
             }
-            console.log(fetchedAttributeLatestTransaction.metadata)
+            // console.log(fetchedAttributeLatestTransaction.metadata)
 
             assetAppend = await updateSingleAsset({
                 txCreatedID: fetchedAttributeLatestTransaction?.id,

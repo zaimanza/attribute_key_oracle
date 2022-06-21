@@ -21,7 +21,7 @@ router.post('/append_attribute', async (req, res) => {
         const assetsModel = await Assets()
         const transactionsModel = await Transactions()
 
-        if (!props?.player_asset_id || !props?.count)
+        if (!props?.player_asset_id || !props?.attributes || !Array.isArray(props?.attributes))
             return res.status(400).json("Unauthorized")
 
         var isCanAppend = true
@@ -37,9 +37,9 @@ router.post('/append_attribute', async (req, res) => {
         var fetchedAsset = await assetsModel.findOne({
             "data.player_asset_id": props?.player_asset_id,
         })
-        console.log(fetchedAsset?.id)
+        // console.log(fetchedAsset?.id)
         var fetchedAttributeLatestTransaction = await fetchLatestTransaction(fetchedAsset?.id)
-        console.log(fetchedAttributeLatestTransaction)
+        // console.log(fetchedAttributeLatestTransaction)
 
 
         var assetAppend
@@ -53,16 +53,41 @@ router.post('/append_attribute', async (req, res) => {
                     player_asset_id: props?.player_asset_id
                 },
                 metadata: {
-                    count: props?.count,
+                    attributes: props?.attributes,
                 },
                 publicKey: user_wallet?.publicKey,
                 privateKey: user_wallet?.privateKey
             })
         } else {
             console.log("updating")
-            // console.log(fetchedAttributeLatestTransaction)
+
+            if (!fetchedAttributeLatestTransaction?.metadata?.attributes) {
+                fetchedAttributeLatestTransaction.metadata.attributes = []
+            }
+
+            for (const attribute of props?.attributes) {
+                for (var i = 0; i < fetchedAttributeLatestTransaction?.metadata?.attributes?.length; i++) {
+                    if (attribute?.rarity === fetchedAttributeLatestTransaction?.metadata?.attributes[i].rarity) {
+                        fetchedAttributeLatestTransaction.metadata.attributes[i].count = attribute?.count
+                    }
+                }
+            }
+
+            for (const attribute of props?.attributes) {
+                for (const fetchedAttribute of fetchedAttributeLatestTransaction?.metadata?.attributes) {
+                    if (attribute?.rarity === fetchedAttribute?.rarity) {
+                        props.attributes = props?.attributes?.filter(x => {
+                            return x?.rarity !== fetchedAttribute?.rarity
+                        })
+                    }
+                }
+            }
+
+            for (const attribute of props?.attributes) {
+                fetchedAttributeLatestTransaction.metadata.attributes.push(attribute)
+            }
             console.log(fetchedAttributeLatestTransaction.metadata)
-            fetchedAttributeLatestTransaction.metadata.count = fetchedAttributeLatestTransaction.metadata.count + props?.count
+
             assetAppend = await updateSingleAsset({
                 txCreatedID: fetchedAttributeLatestTransaction?.id,
                 metadata: fetchedAttributeLatestTransaction.metadata,

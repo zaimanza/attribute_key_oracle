@@ -21,21 +21,21 @@ router.post('/append_attribute', async (req, res) => {
         const assetsModel = await Assets()
         const transactionsModel = await Transactions()
 
-        if (!props?.player_asset_id || !props?.attributes || !Array.isArray(props?.attributes))
+        if (!props?.did || !props?.attributes || !Array.isArray(props?.attributes))
             return res.status(400).json("Unauthorized")
 
         var isCanAppend = true
 
-        var fetchedLatestTransaction = await fetchLatestTransaction(props?.player_asset_id)
+        var fetchedLatestTransaction = await fetchLatestTransaction(props?.did)
 
         if (!fetchedLatestTransaction) {
             isCanAppend = false
             return res.status(400).json("Transaction does not exist")
         }
 
-        // find the player_asset_id
+        // find the did
         var fetchedAsset = await assetsModel.findOne({
-            "data.player_asset_id": props?.player_asset_id,
+            "data.did": props?.did,
         })
         // console.log(fetchedAsset?.id)
         var fetchedAttributeLatestTransaction = await fetchLatestTransaction(fetchedAsset?.id)
@@ -50,7 +50,7 @@ router.post('/append_attribute', async (req, res) => {
             assetAppend = await createAttribute({
                 asset: {
                     type: "attribute",
-                    player_asset_id: props?.player_asset_id
+                    did: props?.did
                 },
                 metadata: {
                     attributes: props?.attributes,
